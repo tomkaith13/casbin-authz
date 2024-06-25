@@ -23,12 +23,13 @@ func main() {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
+
 		sub := "alice" // the user that wants to access a resource.
 		obj := "claim" // the resource that is going to be accessed.
 		act := "write" // the operation that the user performs on the resource.
 
 		if res := e.Enforce(sub, obj, act); res {
-			// permit alice to read data1
+			// permit alice to read claim
 			w.Write([]byte("This is a dummy allowed endpoint!!!!"))
 			w.WriteHeader(http.StatusOK)
 
