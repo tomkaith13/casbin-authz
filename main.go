@@ -1,12 +1,19 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/casbin/casbin/v2"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 )
+
+type Subject struct {
+	Name  string
+	Group string
+}
 
 func main() {
 	r := chi.NewRouter()
@@ -129,6 +136,54 @@ func main() {
 		}
 	})
 
+	// abac-agent Endpoint
+	r.Get("/abac-agent-custom", func(w http.ResponseWriter, r *http.Request) {
+
+		e, err := casbin.NewEnforcer("./abac_custom.conf", "./abac_custom_policy.csv")
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
+		e.AddFunction("my_func", KeyMatchFunc)
+
+		subj := Subject{
+			Name:  "bobby",
+			Group: "agent-custom",
+		}
+
+		res, err := e.Enforce(subj, "/abac-agent-custom", "GET", "user2")
+		if err != nil {
+			// deny the request, show an error
+			http.Error(w, "This is a abac-agent-custom restricted endpoint!!!!"+err.Error(), http.StatusForbidden)
+			return
+		}
+
+		if res {
+			w.Write([]byte("This is a abac-agent-custom allowed endpoint!!!!"))
+			w.WriteHeader(http.StatusOK)
+
+		} else {
+			http.Error(w, "This is a abac-agent-custom restricted endpoint!!!! enforce failed", http.StatusForbidden)
+		}
+	})
+
 	// Start Server
 	http.ListenAndServe(":8080", r)
+}
+
+func CustomMatch(lval string, rval Subject) bool {
+	//  Imagine a long network call to authz from another endpoint
+	time.Sleep(10 * time.Second)
+	fmt.Println("custom auth checked!!")
+	return lval == rval.Name
+}
+
+func KeyMatchFunc(args ...interface{}) (interface{}, error) {
+	lval := args[0].(string)
+	rval := args[1].(Subject)
+	fmt.Println("policy val:", lval)
+	fmt.Println("req val:", rval)
+
+	return (bool)(CustomMatch(lval, rval)), nil
 }
