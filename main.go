@@ -58,7 +58,7 @@ func main() {
 			Group: "caregiver",
 		}
 
-		if res, _ := e.Enforce(subj, "claim", "read"); res {
+		if res, _ := e.Enforce(subj, "/abac", "GET"); res {
 			// permit alice to read claim
 			w.Write([]byte("This is a abac allowed endpoint!!!!"))
 			w.WriteHeader(http.StatusOK)
