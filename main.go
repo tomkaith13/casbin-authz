@@ -60,7 +60,7 @@ func main() {
 			Group: "caregiver",
 		}
 
-		if res, _ := e.Enforce(subj, "/abac", "GET"); res {
+		if res, _ := e.Enforce(subj, "/abac", "GET", "user1"); res {
 			w.Write([]byte("This is a abac allowed endpoint!!!!"))
 			w.WriteHeader(http.StatusOK)
 
@@ -89,7 +89,7 @@ func main() {
 			Group: "agent",
 		}
 
-		if res, _ := e.Enforce(subj, "/abac-agent", "POST"); res {
+		if res, _ := e.Enforce(subj, "/abac-agent", "POST", "user3"); res {
 			w.Write([]byte("This is a abac-agent allowed endpoint!!!!"))
 			w.WriteHeader(http.StatusOK)
 
@@ -118,7 +118,7 @@ func main() {
 			Group: "agent",
 		}
 
-		if res, _ := e.Enforce(subj, "/abac-agent", "GET"); res {
+		if res, _ := e.Enforce(subj, "/abac-agent", "GET", "user2"); res {
 			w.Write([]byte("This is a abac-agent allowed endpoint!!!!"))
 			w.WriteHeader(http.StatusOK)
 

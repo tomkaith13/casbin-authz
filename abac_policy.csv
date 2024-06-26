@@ -1,2 +1,2 @@
-p, r.sub.Group == 'caregiver', /abac, GET
-p, r.sub.Group == 'agent', /abac-agent, (GET)|(POST)
+p, r.sub.Group == 'caregiver', /abac, GET, (user1)|(user2)
+p, r.sub.Group == 'agent', /abac-agent, (GET)|(POST), (user1)|(user2)|(user3)|(user4)|(user5)
