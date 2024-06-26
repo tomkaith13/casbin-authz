@@ -15,6 +15,8 @@ func main() {
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
 
+	// We can add policies per router using https://github.com/casbin/chi-authz
+
 	// Dummy ACL Endpoint
 	r.Get("/dummy", func(w http.ResponseWriter, r *http.Request) {
 
