@@ -15,7 +15,7 @@ func main() {
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
 
-	// Dummy Endpoint
+	// Dummy ACL Endpoint
 	r.Get("/dummy", func(w http.ResponseWriter, r *http.Request) {
 
 		e, err := casbin.NewEnforcer("./model.conf", "./policy.csv")
@@ -40,7 +40,7 @@ func main() {
 		}
 	})
 
-	// Dummy Endpoint
+	// abac Endpoint
 	r.Get("/abac", func(w http.ResponseWriter, r *http.Request) {
 		type Subject struct {
 			Name  string
@@ -59,13 +59,70 @@ func main() {
 		}
 
 		if res, _ := e.Enforce(subj, "/abac", "GET"); res {
-			// permit alice to read claim
 			w.Write([]byte("This is a abac allowed endpoint!!!!"))
 			w.WriteHeader(http.StatusOK)
 
 		} else {
 			// deny the request, show an error
 			http.Error(w, "This is a abac restricted endpoint!!!!", http.StatusForbidden)
+			return
+		}
+	})
+
+	// abac-agent Endpoint
+	r.Post("/abac-agent", func(w http.ResponseWriter, r *http.Request) {
+		type Subject struct {
+			Name  string
+			Group string
+		}
+
+		e, err := casbin.NewEnforcer("./abac.conf", "./abac_policy.csv")
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
+		subj := Subject{
+			Name:  "bob",
+			Group: "agent",
+		}
+
+		if res, _ := e.Enforce(subj, "/abac-agent", "POST"); res {
+			w.Write([]byte("This is a abac-agent allowed endpoint!!!!"))
+			w.WriteHeader(http.StatusOK)
+
+		} else {
+			// deny the request, show an error
+			http.Error(w, "This is a abac-agent restricted endpoint!!!!", http.StatusForbidden)
+			return
+		}
+	})
+
+	// abac-agent Endpoint
+	r.Get("/abac-agent", func(w http.ResponseWriter, r *http.Request) {
+		type Subject struct {
+			Name  string
+			Group string
+		}
+
+		e, err := casbin.NewEnforcer("./abac.conf", "./abac_policy.csv")
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
+		subj := Subject{
+			Name:  "bob",
+			Group: "agent",
+		}
+
+		if res, _ := e.Enforce(subj, "/abac-agent", "GET"); res {
+			w.Write([]byte("This is a abac-agent allowed endpoint!!!!"))
+			w.WriteHeader(http.StatusOK)
+
+		} else {
+			// deny the request, show an error
+			http.Error(w, "This is a abac-agent restricted endpoint!!!!", http.StatusForbidden)
 			return
 		}
 	})
