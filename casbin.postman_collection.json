@@ -1,0 +1,80 @@
+{
+	"info": {
+		"_postman_id": "5c42c3e7-0a06-4b36-8b5d-07aa787178ff",
+		"name": "casbin",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "13380006"
+	},
+	"item": [
+		{
+			"name": "dummy",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "abac",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/abac",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"abac"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "abac-agent",
+			"request": {
+				"method": "POST",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "abac-agent",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/abac-agent",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"abac-agent"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "abac-agent-custom",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/abac-agent-custom",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"abac-agent-custom"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
