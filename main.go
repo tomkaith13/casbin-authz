@@ -176,10 +176,6 @@ func main() {
 }
 
 func CustomMatch(lval string, rval Subject) bool {
-	//  Imagine a long network call to authz from another endpoint
-	time.Sleep(2 * time.Second)
-
-	fmt.Println("custom auth checked!!")
 	return lval == rval.Name
 }
 
