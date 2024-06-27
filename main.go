@@ -24,6 +24,17 @@ func main() {
 
 	// We can add policies per router using https://github.com/casbin/chi-authz
 
+	cachedE, err := casbin.NewCachedEnforcer("./abac_custom.conf", "./abac_custom_policy.csv")
+	if err != nil {
+		fmt.Println("error initializing")
+		return
+	}
+
+	cachedE.AddFunction("my_func", KeyMatchFunc)
+	d := 600 * time.Second
+	cachedE.SetExpireTime(d)
+	cachedE.EnableCache(true)
+
 	// Dummy ACL Endpoint
 	r.Get("/dummy", func(w http.ResponseWriter, r *http.Request) {
 
@@ -139,20 +150,12 @@ func main() {
 	// abac-agent Endpoint
 	r.Get("/abac-agent-custom", func(w http.ResponseWriter, r *http.Request) {
 
-		e, err := casbin.NewEnforcer("./abac_custom.conf", "./abac_custom_policy.csv")
-		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			return
-		}
-
-		e.AddFunction("my_func", KeyMatchFunc)
-
 		subj := Subject{
 			Name:  "bobby",
 			Group: "agent-custom",
 		}
 
-		res, err := e.Enforce(subj, "/abac-agent-custom", "GET", "user2")
+		res, err := cachedE.Enforce(subj, "/abac-agent-custom", "GET", "user2")
 		if err != nil {
 			// deny the request, show an error
 			http.Error(w, "This is a abac-agent-custom restricted endpoint!!!!"+err.Error(), http.StatusForbidden)
@@ -174,7 +177,8 @@ func main() {
 
 func CustomMatch(lval string, rval Subject) bool {
 	//  Imagine a long network call to authz from another endpoint
-	time.Sleep(10 * time.Second)
+	time.Sleep(2 * time.Second)
+
 	fmt.Println("custom auth checked!!")
 	return lval == rval.Name
 }
