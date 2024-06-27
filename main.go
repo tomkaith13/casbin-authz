@@ -175,13 +175,13 @@ func main() {
 	http.ListenAndServe(":8080", r)
 }
 
-func CustomMatch(lval string, rval Subject) bool {
-	return lval == rval.Name
+func CustomMatch(lval Subject, rval string) bool {
+	return lval.Name == rval
 }
 
 func KeyMatchFunc(args ...any) (any, error) {
-	lval := args[0].(string)
-	rval := args[1].(Subject)
+	lval := args[0].(Subject)
+	rval := args[1].(string)
 	fmt.Println("policy val:", lval)
 	fmt.Println("req val:", rval)
 
