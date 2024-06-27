@@ -183,7 +183,7 @@ func CustomMatch(lval string, rval Subject) bool {
 	return lval == rval.Name
 }
 
-func KeyMatchFunc(args ...interface{}) (interface{}, error) {
+func KeyMatchFunc(args ...any) (any, error) {
 	lval := args[0].(string)
 	rval := args[1].(Subject)
 	fmt.Println("policy val:", lval)
